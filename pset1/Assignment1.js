@@ -684,23 +684,110 @@ function run1b4(){
 	
 }
 
+// Exercise 2
 
+// Given a starting element and a defined term (as a function), find the lowest element > the starting element where the term fails
+// This function takes O(N) time since we check each input once
+function fail(inputoutputs, start, term, max){
+    var minElement = max.val + 1; // Returns max + 1 if term works for all remaining elements
+    var minInd = max.ind;
+    for(let i = 0; i < inputoutputs.length; i++){
+        if(inputoutputs[i][0] > start.val && term(inputoutputs[i][0]) != inputoutputs[i][1]){
+            if(inputoutputs[i][0] < minElement){
+                minElement = inputoutputs[i][0];
+                minInd = i;
+            }
+        }
+    }
 
-
-//Useful functions for exercise 2. 
-//Not so much starter code, though.
-
-function structured(inputoutputs){
-	return "NYI";
+    return {ind: minInd, val: minElement};
 }
 
+// Giving a starting element, this generates all possible terms that work for the given element
+// Then, it selects the term that works for the most elements greater than the starting element
+// This function takes O(3 * N) = O(N) since it makes 3 calls to fail(), one for each possible term
+function genLatest(inputoutputs, start, max){
+    var next = fail(inputoutputs, start, function(input){
+        return 2 * input + (inputoutputs[start.ind][1] - 2 * start.val);
+    }, max);
+
+    var best = {ind: next.ind, val: next.val, term: 0};
+
+    next = fail(inputoutputs, start, function(input){
+        return 3 * input + (inputoutputs[start.ind][1] - 3 * start.val);
+    }, max);
+    if(next.val > best.val){
+        best = {ind: next.ind, val: next.val, term: 1};
+    }
+
+    next = fail(inputoutputs, start, function(input){
+        return input * input + (inputoutputs[start.ind][1] - start.val * start.val);
+    }, max);
+    if(next.val > best.val){
+        best = {ind: next.ind, val: next.val, term: 2};
+    }
+
+    return best;
+}
+
+// Generate AST for a given term
+function generateAST(term, inputoutput){
+    if(term == 0){ // 2 * x + ??
+        return new Plus(new Times(new Num(2), new Var("x")), new Num(inputoutput[1] - 2 * inputoutput[0]));
+    }
+    if (term == 1){ // 3 * x + ??
+        return new Plus(new Times(new Num(3), new Var("x")), new Num(inputoutput[1] - 3 * inputoutput[0]));
+    }
+    if (term == 2){ // x * x + ??
+        return new Plus(new Times(new Var("x"), new Var("x")), new Num(inputoutput[1] - inputoutput[0] * inputoutput[0]));
+    }
+
+    return -1;
+}
+
+// This function takes O(N): see each section below for explanations.
+// This algorithm is also complete; see below for explanation.
+function structured(inputoutputs){
+    // Search for min, max - O(N) traversal
+    var min = inputoutputs[0][0];
+    var max = inputoutputs[0][0];
+    var minInd = 0;
+    var maxInd = 0;
+    for(let i = 1; i < inputoutputs.length; i++){
+        if(inputoutputs[i][0] < min){
+            min = inputoutputs[i][0];
+            minInd = i;
+        }
+
+        if(inputoutputs[i][0] > max){
+            max = inputoutputs[i][0];
+            maxInd = i;
+        }
+    }
+
+    // Find largest possible segments: O(4 * N) = O(N) since each function call takes O(N)
+    // Each call to genLatest builds the largest possible continuous segment (where one term works for the entire segment),
+    // using the last segment's ending value as the starting point.
+    // This greedy method works via induction: if a term works for a continuous segment and then the next lowest element,
+    // Then it will work for the continuous segment including the next lowest element.
+    // Therefore, this is guaranteed to find the widest range spanning four continuous segments.
+    // The behavior is undefined if a solution does not exist.
+    var seg1 = genLatest(inputoutputs, {ind: minInd, val: min}, {ind: maxInd, val: max});
+    var seg2 = genLatest(inputoutputs, seg1, {ind: maxInd, val: max});
+    var seg3 = genLatest(inputoutputs, seg2, {ind: maxInd, val: max});
+    var seg4 = genLatest(inputoutputs, seg3, {ind: maxInd, val: max});
+
+    // Generate AST: O(1)
+    var ans = new Ite(new Lt(new Var("x"), new Num(seg3.val)), generateAST(seg3.term, inputoutputs[seg2.ind]), generateAST(seg4.term, inputoutputs[seg3.ind]));
+    ans = new Ite(new Lt(new Var("x"), new Num(seg2.val)), generateAST(seg2.term, inputoutputs[seg1.ind]), ans);
+    return new Ite(new Lt(new Var("x"), new Num(seg1.val)), generateAST(seg1.term, inputoutputs[minInd]), ans);
+}
 
 function run2() {
     var inpt = JSON.parse(document.getElementById("input2").value);
     //This is the data from which you will synthesize.
-    writeToConsole("You need to implement this");    
+    writeToConsole(structured(inpt).toString());    
 }
-
 
 function genData() {
     //If you write a block of code in program1 that writes its output to a variable out,

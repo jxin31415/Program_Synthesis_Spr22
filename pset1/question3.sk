@@ -1,23 +1,67 @@
+generator bit expBool([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconsts] consts){
+    assert bnd >= 0;
+    int t = ??;
 
+    if(t == 0){
+        return false;
+    }
+    
+    if(t == 1){
+        return exp(bnd - 1, vars, consts) < exp(bnd - 1, vars, consts);
+    }
+    
+    bit a = expBool(bnd - 1, vars, consts);
 
+    if(t == 2){
+        return !a;
+    }
+    
+    return a && expBool(bnd-1, vars, consts);
+}
 
 generator int exp([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconsts] consts){
-    //In this generator, nvars is the number of variables and nconsts is the number of constants.
-    //the array vars contains the values of all the variables and the array consts of all the constants.
-    //Note that unlike problem 1, where you were generating ASTs, here you are synthesizing the actual function.
-    //Also note that you will probably need a separate generator for the boolean expressions.
+    assert bnd >= 0;
+    int t = ??;
+
+    if(t == 0){
+        return {| vars[??] | consts[??] |};
+    }
+
+    int a = exp(bnd-1, vars, consts);
+    int b = exp(bnd-1, vars, consts);
+
+    if(t == 1){
+        return a * b;
+    }
+    if(t == 2){
+        return a + b;
+    }
+
+    if(expBool(bnd-1, vars, consts)){
+        return a;
+    } else {
+        return b;
+    }
 }
 
-
-harness void experiment2(){
-    //Use this harness for the example from 1.e
-    //Assume that x is the first variable and y is the second variable, so the
-    //input x=10 and y=7, for example will correspond to an array {10,7}.
+int wrapper1(int x, int y){
+    return exp(3, {x, y}, {});
 }
-
 
 harness void experiment1(){
-    //Use this harness for the example from 1.b
-    //Assume that x is the first variable and y is the second variable, so the
-    //input x=8 and y=3, for example will correspond to an array {8,3}.
+    assert wrapper1(5, 5) == 15;
+    assert wrapper1(8, 3) == 14;
+    assert wrapper1(1234, 227) == 1688;
+}
+
+int wrapper2(int x, int y){
+    return exp(3, {x, y}, {-1, 5});
+}
+
+harness void experiment2(){
+    assert wrapper2(10,7) == 17;
+    assert wrapper2(4,7) == -7;
+    assert wrapper2(10,3) == 13;
+    assert wrapper2(1, -7)== -6;
+    assert wrapper2(1, 8) == -8;
 }

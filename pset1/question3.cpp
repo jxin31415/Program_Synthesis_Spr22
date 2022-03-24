@@ -44,23 +44,23 @@ void experiment1() {
 }
 void wrapper2(int x, int y, int& _out) {
   int  a_s14=0;
-  if ((x) < (y)) {
-    a_s14 = -1;
+  if ((y) < (x)) {
+    a_s14 = x + y;
   } else {
-    a_s14 = 1;
+    a_s14 = y;
   }
   int  b_s16=0;
-  if ((y) < (x)) {
-    b_s16 = x + y;
+  if ((x) < (y)) {
+    b_s16 = -1;
   } else {
-    b_s16 = y;
+    b_s16 = 1;
   }
   _out = a_s14 * b_s16;
   return;
 }
 void wrapper1(int x, int y, int& _out) {
-  int  b_s16=y + (x + y);
-  _out = b_s16;
+  int  a_s14=(y + x) + y;
+  _out = a_s14;
   return;
 }
 

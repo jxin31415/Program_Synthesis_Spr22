@@ -45,7 +45,7 @@ void experiment1() {
 void wrapper2(int x, int y, int& _out) {
   int  a_s20=0;
   if ((y) < (x)) {
-    a_s20 = y + x;
+    a_s20 = x + y;
   } else {
     a_s20 = -1 * y;
   }
@@ -53,7 +53,8 @@ void wrapper2(int x, int y, int& _out) {
   return;
 }
 void wrapper1(int x, int y, int& _out) {
-  _out = y + (y + x);
+  int  a_s20=(y + y) + x;
+  _out = a_s20;
   return;
 }
 

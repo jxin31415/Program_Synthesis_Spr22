@@ -3,6 +3,9 @@
 
 // The resulting synthesis happens significantly faster, and the synthesized expression is also simpler.
 
+// flags to speed up synthesis & provide debug output
+pragma options "--fe-output-code -V3 --bnd-inbits 5 -bnd-int-range 100 --bnd-inline-amnt 6";
+
 generator int genVar([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconsts] consts) {
     return vars[??];
 }

@@ -2,20 +2,24 @@ generator bit expBool([int nvars, int nconsts], int bnd, int[nvars] vars, int[nc
     assert bnd >= 0;
     int t = ??;
 
+    // false
     if(t == 0){
         return false;
     }
     
+    // less than
     if(t == 1){
         return exp(bnd - 1, vars, consts) < exp(bnd - 1, vars, consts);
     }
     
     bit a = expBool(bnd - 1, vars, consts);
 
+    // not
     if(t == 2){
         return !a;
     }
     
+    // and
     return a && expBool(bnd-1, vars, consts);
 }
 
@@ -23,6 +27,7 @@ generator int exp([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconst
     assert bnd >= 0;
     int t = ??;
 
+    // var or num
     if(t == 0){
         return {| vars[??] | consts[??] |};
     }
@@ -30,13 +35,17 @@ generator int exp([int nvars, int nconsts], int bnd, int[nvars] vars, int[nconst
     int a = exp(bnd-1, vars, consts);
     int b = exp(bnd-1, vars, consts);
 
+    // times
     if(t == 1){
         return a * b;
     }
+
+    // plus
     if(t == 2){
         return a + b;
     }
 
+    // ite
     if(expBool(bnd-1, vars, consts)){
         return a;
     } else {

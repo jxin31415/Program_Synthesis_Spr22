@@ -6,11 +6,11 @@ import java.util.*;
 import fun_Verifier.ast.*;
 
 public class parser {
-	
+    
     public static void main(String[] args) throws IOException {
-    	FastReader scan = new FastReader("fun_Verifier/in.fun");
+        FastReader scan = new FastReader("fun_Verifier/in.fun");
         PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
-		// try {
+        // try {
         //     out = new PrintWriter("file.out");
         // } catch (FileNotFoundException e) {
         //     e.printStackTrace();
@@ -342,49 +342,49 @@ public class parser {
             index++;
     }
 
-	static class FastReader {
-		BufferedReader br;
-		StringTokenizer st;
+    static class FastReader {
+        BufferedReader br;
+        StringTokenizer st;
 
-		public FastReader() {
-			br = new BufferedReader(new InputStreamReader(System.in));
-		}
+        public FastReader() {
+            br = new BufferedReader(new InputStreamReader(System.in));
+        }
 
-		public FastReader(String s) throws FileNotFoundException {
-			br = new BufferedReader(new FileReader(new File(s)));
-		}
+        public FastReader(String s) throws FileNotFoundException {
+            br = new BufferedReader(new FileReader(new File(s)));
+        }
 
-		String next() {
-			while (st == null || !st.hasMoreElements()) {
-				try {
-					st = new StringTokenizer(br.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			return st.nextToken();
-		}
+        String next() {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return st.nextToken();
+        }
 
-		int nextInt() {
-			return Integer.parseInt(next());
-		}
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
 
-		long nextLong() {
-			return Long.parseLong(next());
-		}
+        long nextLong() {
+            return Long.parseLong(next());
+        }
 
-		double nextDouble() {
-			return Double.parseDouble(next());
-		}
+        double nextDouble() {
+            return Double.parseDouble(next());
+        }
 
-		String nextLine() {
-			String str = "";
-			try {
-				str = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return str;
-		}
-	}
+        String nextLine() {
+            String str = "";
+            try {
+                str = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return str;
+        }
+    }
 }

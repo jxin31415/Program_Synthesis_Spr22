@@ -34,7 +34,6 @@ public class parser {
 
                 int bracket = 1; j++;
 
-                int start = j;
                 while(bracket != 0){
                     if(prog.charAt(j) == '{')
                         bracket++;

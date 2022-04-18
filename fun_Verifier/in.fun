@@ -1,3 +1,4 @@
+/*
 f = fun [out < 10] { // Brackets denote an assumed precondition
    out = 0
    while (it >= 0) [out >= 0] { // Brackets denote an estimated loop invariant
@@ -6,9 +7,9 @@ f = fun [out < 10] { // Brackets denote an assumed precondition
    }
 
    assert out == 5 // Asserts serve as the postcondition
-}
+}*/
 
-g = fun {
+g = fun [x > 495] {
     x = x + 3
     y = 2
 
@@ -17,9 +18,9 @@ g = fun {
     else
         x = x - 2
     
-    assert x > 5
+    assert x > 500
 }
-
+/*
 h = fun {
     i = 1
     sum = 0
@@ -34,3 +35,4 @@ h = fun {
 
     assert sum >= 0
 }
+*/

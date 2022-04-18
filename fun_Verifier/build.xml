@@ -60,6 +60,7 @@
             	<exclude name="*.fun"/>
               	<exclude name="ivy.xml"/>
             	<exclude name="ivysettings.xml"/>
+            	<exclude name="result.out"/>
             	<exclude name="README.md"/>
                 </fileset>
         </delete>

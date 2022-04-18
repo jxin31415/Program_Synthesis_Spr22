@@ -12,6 +12,47 @@ public class ast {
         }
     }
 
+    public static abstract class BinaryOperator extends Expression {
+        Expression left, right;
+
+        public BinaryOperator(Expression left, Expression right){
+            this.left = left;
+            this.right = right;
+        }
+
+        public BinaryOperator copy(){
+            return this.copy();
+        }
+
+        public String toString() {
+            throw new Error("Unimplemented method: toString()");
+        }
+
+        public int interpret(int[] envt) {
+            throw new Error("Unimplemented method: interpret()");
+        }
+    }
+
+    public static class UnaryOperator extends Expression {
+        Expression exp;
+
+        public UnaryOperator(Expression exp){
+            this.exp = exp;
+        }
+
+        public UnaryOperator copy(){
+            return this.copy();
+        }
+
+        public String toString() {
+            throw new Error("Unimplemented method: toString()");
+        }
+
+        public int interpret(int[] envt) {
+            throw new Error("Unimplemented method: interpret()");
+        }
+    }
+
     public static class Var extends Expression {
         String name;
 
@@ -44,12 +85,14 @@ public class ast {
         // }
     }
 
-    public static class Plus extends Expression {
-        Expression left, right;
+    public static class Plus extends BinaryOperator {
 
         public Plus(Expression left, Expression right) {
-            this.left = left;
-            this.right = right;
+            super(left, right);
+        }
+
+        public Plus copy(){
+            return new Plus(this.left, this.right);
         }
         
         public String toString() {
@@ -61,12 +104,14 @@ public class ast {
         // }
     }
     
-    public static class Equal extends Expression {
-        Expression left, right;
+    public static class Equal extends BinaryOperator {
 
         public Equal(Expression left, Expression right) {
-            this.left = left;
-            this.right = right;
+            super(left, right);
+        }
+
+        public Equal copy(){
+            return new Equal(this.left, this.right);
         }
 
         public String toString() {
@@ -78,12 +123,14 @@ public class ast {
         // }
     }
 
-    public static class LessThan extends Expression {
-        Expression left, right;
+    public static class LessThan extends BinaryOperator {
 
         public LessThan(Expression left, Expression right) {
-            this.left = left;
-            this.right = right;
+            super(left, right);
+        }
+
+        public LessThan copy(){
+            return new LessThan(this.left, this.right);
         }
 
         public String toString() {
@@ -95,12 +142,14 @@ public class ast {
         // }
     }
 
-    public static class And extends Expression{
-        Expression left, right;
+    public static class And extends BinaryOperator {
 
         public And(Expression left, Expression right) {
-            this.left = left;
-            this.right = right;
+            super(left, right);
+        }
+
+        public And copy(){
+            return new And(this.left, this.right);
         }
 
         public String toString() {
@@ -112,12 +161,14 @@ public class ast {
         // }
     }
 
-    public static class Or extends Expression{
-        Expression left, right;
+    public static class Or extends BinaryOperator {
 
         public Or(Expression left, Expression right) {
-            this.left = left;
-            this.right = right;
+            super(left, right);
+        }
+
+        public Or copy(){
+            return new Or(this.left, this.right);
         }
 
         public String toString() {
@@ -129,11 +180,14 @@ public class ast {
         // }
     }
 
-    public static class Not extends Expression {
-        Expression exp;
+    public static class Not extends UnaryOperator {
 
         public Not(Expression exp) {
-            this.exp = exp;
+            super(exp);
+        }
+
+        public Not copy(){
+            return new Not(this.exp);
         }
         
         public String toString() {
@@ -145,11 +199,14 @@ public class ast {
         // }
     }
 
-    public static class Negate extends Expression {
-        Expression exp;
+    public static class Negate extends UnaryOperator {
 
         public Negate(Expression exp) {
-            this.exp = exp;
+            super(exp);
+        }
+
+        public Negate copy(){
+            return new Negate(this.exp);
         }
         
         public String toString() {
@@ -212,15 +269,17 @@ public class ast {
 
     public static class While extends Statement {
         Expression cond;
+        Expression invar;
         Statement action;
 
-        public While(Expression cond, Statement action) {
+        public While(Expression cond, Statement action, Expression invar) {
             this.cond = cond;
             this.action = action;
+            this.invar = invar;
         }
         
         public String toString() {
-            return "while (" + this.cond.toString() + ") {\n" + this.action.toString() + "}\n";
+            return "while (" + this.cond.toString() + ") [" + this.invar.toString() + "] {\n" + this.action.toString() + "}\n";
         }
     }
 
@@ -244,12 +303,12 @@ public class ast {
         }
 
         public String toString() {
-            return "assume (" + this.exp.toString() + ")\n";
+            return "assert (" + this.exp.toString() + ")\n";
         }
     }
 
     public static class NoOp extends Statement {
-        
+
         public NoOp(){
         }
 

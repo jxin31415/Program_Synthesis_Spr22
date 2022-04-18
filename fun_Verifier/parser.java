@@ -7,14 +7,8 @@ import fun_Verifier.ast.*;
 
 public class parser {
     
-    public static void main(String[] args) throws IOException {
-        FastReader scan = new FastReader("fun_Verifier/in.fun");
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
-        // try {
-        //     out = new PrintWriter("file.out");
-        // } catch (FileNotFoundException e) {
-        //     e.printStackTrace();
-        // }
+    public static List<Statement> functionParser(String file) throws IOException {
+        FastReader scan = new FastReader(file);
 
         // fun program should be syntactically valid
         StringBuilder prog = new StringBuilder("");
@@ -59,6 +53,8 @@ public class parser {
 
         System.out.println(functions);
 
+        List<Statement> funcs = new ArrayList<>();
+
         for(String each: functions){
             // Parse functions into an AST
             Statement func = null;
@@ -78,10 +74,10 @@ public class parser {
                 }
             }
 
-            System.out.println(func);
+            funcs.add(func);
         }
 
-        out.close();
+        return funcs;
     }
 
     static int index;
@@ -135,7 +131,13 @@ public class parser {
         } else if(consume("while")){
             // Handle loops
             Expression cond = expression();
+            Expression invar = null;
             Statement block = null;
+
+            if(consume("[")){
+                invar = expression();
+                consume("]");
+            }
 
             if(consume("{")){
                 // Handle loops with curly braces
@@ -151,8 +153,12 @@ public class parser {
                 block = statement();
             }
 
-            return new While(cond, block);
+            return new While(cond, block, invar);
 
+        } else if(consume("assume")){
+            return new Assume(expression());
+        } else if(consume("assert")){
+            return new Assert(expression());
         } else {
             // Handle variable assignment
             Var var = consumeVar();

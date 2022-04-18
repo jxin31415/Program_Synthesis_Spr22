@@ -106,6 +106,18 @@ public class ast {
         // }
     }
 
+    public static class True extends Expression {
+        public True(){}
+
+        public String toString() {
+            return "T";
+        }
+
+        // public int interpret(int[] envt) {
+        //     return 1;
+        // }
+    }
+
     public static class Plus extends BinaryOperator {
 
         public Plus(Expression left, Expression right) {
@@ -212,7 +224,7 @@ public class ast {
         }
         
         public String toString() {
-            return "(!" + this.exp.toString()+ ")";
+            return "!" + this.exp.toString();
         }
 
         // public int interpret(int[] envt) {
@@ -231,7 +243,7 @@ public class ast {
         }
         
         public String toString() {
-            return "(-" + this.exp.toString()+ ")";
+            return "-" + this.exp.toString();
         }
 
         // public int interpret(int[] envt) {

@@ -67,6 +67,10 @@ public class verifier {
             return node;
         }
 
+        if(node instanceof True){
+            return node;
+        }
+
         if(node instanceof BinaryOperator){
             BinaryOperator bop = ((BinaryOperator) node).copy();
             bop.left = replace(bop.left, target, replacement);
@@ -81,6 +85,44 @@ public class verifier {
         }
 
         throw new IllegalStateException("Invalid expression detected");
+    }
+
+    public static Expression VC(Statement s, Expression Q){
+        if(s instanceof Statements){
+            Statements statements = (Statements) s;
+
+            return new And(VC(statements.s2, Q), VC(statements.s1, awp(statements.s2, Q)));
+        }
+
+        if(s instanceof Ite){
+            Ite ite = (Ite) s;
+
+            return new And(VC(ite.s1, Q), VC(ite.s2, Q));
+        }
+
+        if(s instanceof Assign){
+            return new True();
+        }
+
+        if(s instanceof While){
+            While loop = (While) s;
+
+            Expression clause1 = new And(loop.invar, loop.cond);
+            Expression clause2 = new And(awp(loop.action, loop.invar), VC(loop.action, loop.invar));
+            Expression clause3 = new Or(new Not(new And(loop.invar, new Not(loop.cond))), Q);
+
+            return new And(new Or(new Not(clause1), clause2), clause3);
+        }
+
+        if(s instanceof NoOp){
+            return new True();
+        }
+
+        if(s instanceof Assert){
+            return new True();
+        }
+
+        throw new IllegalStateException("Invalid statement detected");
     }
     
     public static void main(String[] args) {
@@ -98,10 +140,14 @@ public class verifier {
             System.out.println("Function detected: ");
             System.out.print(each);
 
-            System.out.println("\n");
-            System.out.println("Approximate weakest preconditions required to satisfy asserts: ");
+            System.out.println();
+            System.out.println("Now computing: approximate weakest preconditions required to satisfy asserts: ");
             System.out.println(awp(each.start, null));
-            System.out.println("\n\n");
+            System.out.println();
+
+            System.out.println("Now computing: verification conditions: ");
+            System.out.println(VC(each.start, new True()));
+            System.out.println();
 
         }
     }

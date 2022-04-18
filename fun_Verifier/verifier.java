@@ -142,13 +142,17 @@ public class verifier {
 
             System.out.println();
             System.out.println("Now computing: approximate weakest preconditions required to satisfy asserts: ");
-            System.out.println(awp(each.start, null));
+            Expression awp = awp(each.start, null);
+            System.out.println(awp);
             System.out.println();
 
             System.out.println("Now computing: verification conditions: ");
-            System.out.println(VC(each.start, new True()));
+            Expression vc = VC(each.start, new True());
+            System.out.println(vc);
             System.out.println();
 
+            System.out.println("Now verifying the conditions:");
+            System.out.println(vc + "\n&&\n" + each.precond + " => " + awp + "?");
         }
     }
 }

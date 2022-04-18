@@ -7,7 +7,10 @@ public class ast {
         Statement start;
 
         public Function(Expression precond, Statement start){
-            this.precond = precond;
+            if(precond == null)
+                this.precond = new True();
+            else
+                this.precond = precond;
             this.start = start;
         }
 

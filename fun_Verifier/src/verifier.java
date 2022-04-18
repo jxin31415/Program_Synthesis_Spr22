@@ -1,9 +1,9 @@
-package fun_Verifier;
+package fun_Verifier.src;
 
 import java.util.*;
 import java.io.*;
-import fun_Verifier.ast.*;
-import fun_Verifier.parser;
+import fun_Verifier.src.ast.*;
+import fun_Verifier.src.parser;
 
 public class verifier {
 
@@ -129,7 +129,7 @@ public class verifier {
         List<Function> funcs;
         
         try {
-            funcs = parser.functionParser("fun_Verifier/in.fun");
+            funcs = parser.functionParser("fun_Verifier/src/in.fun");
         } catch (IOException e){
             System.err.println("Error reading from file.");
             e.printStackTrace();

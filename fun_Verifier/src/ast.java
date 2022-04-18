@@ -1,4 +1,4 @@
-package fun_Verifier;
+package fun_Verifier.src;
 
 public class ast {
 

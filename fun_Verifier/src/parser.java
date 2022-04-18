@@ -1,9 +1,9 @@
-package fun_Verifier;
+package fun_Verifier.src;
 
 import java.io.*;
 import java.util.*;
 
-import fun_Verifier.ast.*;
+import fun_Verifier.src.ast.*;
 
 public class parser {
     

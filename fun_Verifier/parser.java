@@ -7,7 +7,7 @@ import fun_Verifier.ast.*;
 
 public class parser {
     
-    public static List<Statement> functionParser(String file) throws IOException {
+    public static List<Function> functionParser(String file) throws IOException {
         FastReader scan = new FastReader(file);
 
         // fun program should be syntactically valid
@@ -23,8 +23,6 @@ public class parser {
         while(prog.indexOf("/*") != -1){
             prog.delete(prog.indexOf("/*"), prog.indexOf("*/") + 2);
         }
-
-        System.out.println(prog);
 
         // Find every function
         List<String> functions = new ArrayList<>();
@@ -47,20 +45,25 @@ public class parser {
                     j++;
                 }
 
-                functions.add(prog.substring(start, j-1));
+                functions.add(prog.substring(i-2, j));
             }
         }
 
-        System.out.println(functions);
-
-        List<Statement> funcs = new ArrayList<>();
+        List<Function> funcs = new ArrayList<>();
 
         for(String each: functions){
             // Parse functions into an AST
             Statement func = null;
+            Expression precond = null;
             index = 0;
             current = each + "x=0"; // Insert no-op
-
+            consume("fun");
+            if(consume("[")){
+                precond = expression();
+                consume("]");
+            }
+            consume("{");
+            
             while(true){
                 try {
                     if(func == null) {
@@ -74,7 +77,9 @@ public class parser {
                 }
             }
 
-            funcs.add(func);
+            consume("}");
+
+            funcs.add(new Function(precond, func));
         }
 
         return funcs;
@@ -155,8 +160,6 @@ public class parser {
 
             return new While(cond, block, invar);
 
-        } else if(consume("assume")){
-            return new Assume(expression());
         } else if(consume("assert")){
             return new Assert(expression());
         } else {

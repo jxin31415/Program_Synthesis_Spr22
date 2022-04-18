@@ -47,10 +47,6 @@ public class verifier {
             return new And(Q, cond.exp);
         }
 
-        if(s instanceof Assume){
-            // TO-DO
-        }
-
         throw new IllegalStateException("Invalid statement detected");
     }
 
@@ -88,7 +84,7 @@ public class verifier {
     }
     
     public static void main(String[] args) {
-        List<Statement> funcs;
+        List<Function> funcs;
         
         try {
             funcs = parser.functionParser("fun_Verifier/in.fun");
@@ -98,13 +94,15 @@ public class verifier {
             return;
         }
 
-        for(Statement each: funcs){
-            System.out.println("Function detected: \n");
-            System.out.println(each);
+        for(Function each: funcs){
+            System.out.println("Function detected: ");
+            System.out.print(each);
 
-            System.out.println("\n\n");
+            System.out.println("\n");
             System.out.println("Approximate weakest preconditions required to satisfy asserts: ");
-            System.out.println(awp(each, null));
+            System.out.println(awp(each.start, null));
+            System.out.println("\n\n");
+
         }
     }
 }

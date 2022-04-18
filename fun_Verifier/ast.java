@@ -1,6 +1,27 @@
 package fun_Verifier;
 
 public class ast {
+
+    public static class Function {
+        Expression precond;
+        Statement start;
+
+        public Function(Expression precond, Statement start){
+            this.precond = precond;
+            this.start = start;
+        }
+
+        public String toString() {
+            if(precond == null){
+                return "fun {\n" + this.start.toString() + "}\n";
+            }
+            return "fun [" + this.precond.toString() + "] {\n" + this.start.toString() + "}\n";
+        }
+
+        public int interpret(int[] envt) {
+            throw new Error("Unimplemented method: interpret()");
+        }
+    }
    
     public static class Expression {
         public String toString() {
@@ -279,19 +300,9 @@ public class ast {
         }
         
         public String toString() {
+            if(this.invar == null)
+                return "while (" + this.cond.toString() + ") {\n" + this.action.toString() + "}\n";
             return "while (" + this.cond.toString() + ") [" + this.invar.toString() + "] {\n" + this.action.toString() + "}\n";
-        }
-    }
-
-    public static class Assume extends Statement {
-        Expression exp;
-
-        public Assume(Expression exp){
-            this.exp = exp;
-        }
-
-        public String toString() {
-            return "assume (" + this.exp.toString() + ")\n";
         }
     }
 

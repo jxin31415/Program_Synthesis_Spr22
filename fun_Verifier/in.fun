@@ -1,4 +1,4 @@
-/*
+// Satisfiable, unverified
 f = fun [out < 10] { // Brackets denote an assumed precondition
    out = 0
    while (it >= 0) [out >= 0] { // Brackets denote an estimated loop invariant
@@ -6,10 +6,13 @@ f = fun [out < 10] { // Brackets denote an assumed precondition
        it = it - 1
    }
 
-   assert out == 5 // Asserts serve as the postcondition
-}*/
+   assert out >= 0 // Asserts serve as the postcondition
+   assert it == -1
+}
 
-g = fun [x > 495] {
+
+// Satisfiable, unverified
+g = fun [x > 0] {
     x = x + 3
     y = 2
 
@@ -20,7 +23,8 @@ g = fun [x > 495] {
     
     assert x > 500
 }
-/*
+
+// Satisfiable and valid
 h = fun {
     i = 1
     sum = 0
@@ -35,4 +39,3 @@ h = fun {
 
     assert sum >= 0
 }
-*/

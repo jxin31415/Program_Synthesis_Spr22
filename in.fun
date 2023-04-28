@@ -1,41 +1,15 @@
-// Satisfiable, unverified
-f = fun [out < 10] { // Brackets denote an assumed precondition
-   out = 0
-   while (it >= 0) [out >= 0] { // Brackets denote an estimated loop invariant
-       out = out + it
-       it = it - 1
-   }
-
-   assert out >= 0 // Asserts serve as the postcondition
-   assert it == -1
-}
-
-
-// Satisfiable, unverified
-g = fun [x > 0] {
-    x = x + 3
-    y = 2
-
-    if y >= 2
-        x = x + 2
-    else
-        x = x - 2
-    
-    assert x > 500
-}
-
-// Satisfiable and valid
-h = fun {
-    i = 1
+game = fun[(a==1 || a==2 || a==3)] {
     sum = 0
-    while i <= it [sum >= 0] {
-        j = 1
-        while j <= i [sum >= 0 && j >= 0] {
-            sum = sum + j
-            j = j + 1
-        }
-        i = i + 1
-    }
+    iter = 0
 
-    assert sum >= 0
+    while sum < 21 [(a<(sum-a)) && (a==1 || a==2 || a==3)] {
+        b = (4-a)
+
+        sum = sum + a
+
+        assert sum >= 21 || sum + b < 21
+        
+        sum = sum + b
+        iter = iter + 1
+    }
 }

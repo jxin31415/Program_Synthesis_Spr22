@@ -109,76 +109,82 @@ public class verifyAndSolve {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        int prog_num = 2; // Ignore "true" and "false" invariants
+        while(true) {
         
-        List<Function> funcs;
-        
-        try {
-            funcs = parser.functionParser("in.fun");
-        } catch (IOException e){
-            System.err.println("Error reading from file.");
-            e.printStackTrace();
-            return;
+            List<Function> funcs;
+            
+            try {
+                funcs = parser.functionParser("in/in" + prog_num + ".fun");
+            } catch (IOException e){
+                System.err.println("Error reading from file.");
+                e.printStackTrace();
+                break;
+            }
+            
+            Configuration config = Configuration.defaultConfiguration();
+            LogManager logger = BasicLogManager.create(config);
+            ShutdownNotifier notifier = ShutdownNotifier.createDummy();
+
+            Solvers solver = Solvers.SMTINTERPOL;
+            for(Function each: funcs){
+            Expression exp = verifier.generateVerification(each); 
+            
+            try (SolverContext context =  SolverContextFactory.createSolverContext(config, logger, notifier, solver)) {
+                
+                FormulaManager fmgr = context.getFormulaManager();
+
+                bmgr = fmgr.getBooleanFormulaManager();
+                imgr = fmgr.getIntegerFormulaManager();
+
+                variables = new HashMap<>();
+                
+                BooleanFormula constraint = buildBooleanFormula(exp); // This checks satisfiability
+                
+                System.out.println("Checking satisfiability...");
+                try (ProverEnvironment prover = context.newProverEnvironment(ProverOptions.GENERATE_MODELS)) {
+                    prover.addConstraint(constraint);
+                    boolean isUnsat = prover.isUnsat();
+                    if (!isUnsat) {
+                        Model model = prover.getModel();
+                        System.out.println("Function is satisfiable.");
+                        System.out.println("Model output:");
+                        for(String s: variables.keySet()) {
+                            System.out.println(s + " := " + model.evaluate(variables.get(s)));
+                        }
+                    } else {
+                        System.out.println("Function is not satisfiable.");
+                    }
+                }
+                
+                BooleanFormula valid = bmgr.not(buildBooleanFormula(exp)); // This checks validity
+                System.out.println("\n\nChecking validity...");
+                
+                try (ProverEnvironment prover = context.newProverEnvironment(ProverOptions.GENERATE_MODELS)) {
+                    prover.addConstraint(valid);
+                    boolean isUnsat = prover.isUnsat();
+                    if (isUnsat) {
+                        System.out.println("Function is valid and verified!!");
+                        out.println("YES");
+                    } else {
+                        System.out.println("Function unable to be verified :(\nThis may mean the function is invalid, or it may mean that you need to strengthen its preconditions or any loop invariants.");
+                        out.println("NO");
+                    }
+                    }
+                
+                } catch (InvalidConfigurationException | UnsatisfiedLinkError e) {
+                // on some machines we support only some solvers,
+                // thus we can ignore these errors.
+                System.out.println("Solver " + solver + " is not available.");
+                } catch (UnsupportedOperationException e) {
+                System.out.println("Error");
+                }
+            }
+
+            prog_num++;
         }
-        
-        Configuration config = Configuration.defaultConfiguration();
-        LogManager logger = BasicLogManager.create(config);
-        ShutdownNotifier notifier = ShutdownNotifier.createDummy();
 
-        Solvers solver = Solvers.SMTINTERPOL;
-        for(Function each: funcs){
-           Expression exp = verifier.generateVerification(each); 
-           
-           try (SolverContext context =  SolverContextFactory.createSolverContext(config, logger, notifier, solver)) {
-               
-               FormulaManager fmgr = context.getFormulaManager();
-
-               bmgr = fmgr.getBooleanFormulaManager();
-               imgr = fmgr.getIntegerFormulaManager();
-
-               variables = new HashMap<>();
-               
-               BooleanFormula constraint = buildBooleanFormula(exp); // This checks satisfiability
-               
-               System.out.println("Checking satisfiability...");
-               try (ProverEnvironment prover = context.newProverEnvironment(ProverOptions.GENERATE_MODELS)) {
-                   prover.addConstraint(constraint);
-                   boolean isUnsat = prover.isUnsat();
-                   if (!isUnsat) {
-                       Model model = prover.getModel();
-                       System.out.println("Function is satisfiable.");
-                       System.out.println("Model output:");
-                       for(String s: variables.keySet()) {
-                           System.out.println(s + " := " + model.evaluate(variables.get(s)));
-                       }
-                   } else {
-                       System.out.println("Function is not satisfiable.");
-                   }
-               }
-               
-               BooleanFormula valid = bmgr.not(buildBooleanFormula(exp)); // This checks validity
-               System.out.println("\n\nChecking validity...");
-               
-               try (ProverEnvironment prover = context.newProverEnvironment(ProverOptions.GENERATE_MODELS)) {
-                   prover.addConstraint(valid);
-                   boolean isUnsat = prover.isUnsat();
-                   if (isUnsat) {
-                       System.out.println("Function is valid and verified!!");
-                       out.println("YES");
-                   } else {
-                       System.out.println("Function unable to be verified :(\nThis may mean the function is invalid, or it may mean that you need to strengthen its preconditions or any loop invariants.");
-                       out.println("NO");
-                   }
-                 }
-               
-           } catch (InvalidConfigurationException | UnsatisfiedLinkError e) {
-               // on some machines we support only some solvers,
-               // thus we can ignore these errors.
-               System.out.println("Solver " + solver + " is not available.");
-           } catch (UnsupportedOperationException e) {
-               System.out.println("Error");
-           }
-        }
-        
         out.close();
     }
     

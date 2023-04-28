@@ -166,19 +166,19 @@ public class verifyAndSolve {
                     boolean isUnsat = prover.isUnsat();
                     if (isUnsat) {
                         System.out.println("Function is valid and verified!!");
-                        out.println("YES");
+                        out.println(prog_num);
                     } else {
                         System.out.println("Function unable to be verified :(\nThis may mean the function is invalid, or it may mean that you need to strengthen its preconditions or any loop invariants.");
-                        out.println("NO");
                     }
-                    }
+                }
                 
                 } catch (InvalidConfigurationException | UnsatisfiedLinkError e) {
                 // on some machines we support only some solvers,
                 // thus we can ignore these errors.
-                System.out.println("Solver " + solver + " is not available.");
+                    System.out.println("Solver " + solver + " is not available.");
                 } catch (UnsupportedOperationException e) {
-                System.out.println("Error");
+                    System.out.println("Error");
+                    e.printStackTrace();
                 }
             }
 

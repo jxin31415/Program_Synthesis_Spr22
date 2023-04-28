@@ -163,10 +163,10 @@ public class verifyAndSolve {
                    boolean isUnsat = prover.isUnsat();
                    if (isUnsat) {
                        System.out.println("Function is valid and verified!!");
-                       out.println("Function is valid and verified!!");
+                       out.println("YES");
                    } else {
                        System.out.println("Function unable to be verified :(\nThis may mean the function is invalid, or it may mean that you need to strengthen its preconditions or any loop invariants.");
-                       out.println("Function unable to be verified :(\nThis may mean the function is invalid, or it may mean that you need to strengthen its preconditions or any loop invariants.");
+                       out.println("NO");
                    }
                  }
                

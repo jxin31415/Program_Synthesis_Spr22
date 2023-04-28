@@ -139,6 +139,25 @@ public class ast {
         //     return this.left.interpret(envt) + this.right.interpret(envt);
         // }
     }
+
+    public static class Multiply extends BinaryOperator {
+
+        public Multiply(Expression left, Expression right) {
+            super(left, right);
+        }
+
+        public Multiply copy(){
+            return new Multiply(this.left, this.right);
+        }
+        
+        public String toString() {
+            return "("+ this.left.toString() + "*" + this.right.toString()+")";
+        }
+        
+        // public int interpret(int[] envt) {
+        //     return this.left.interpret(envt) * this.right.interpret(envt);
+        // }
+    }
     
     public static class Equal extends BinaryOperator {
 

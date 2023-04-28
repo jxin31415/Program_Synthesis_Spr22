@@ -83,6 +83,11 @@ public class verifyAndSolve {
             return imgr.makeNumber(num.val);
         }
         
+        if(exp instanceof Multiply) {
+            Multiply multiply = (Multiply) exp;
+            return imgr.multiply(buildIntegerFormula(multiply.left), buildIntegerFormula(multiply.right));
+        }
+
         if(exp instanceof Plus) {
             Plus plus = (Plus) exp;
             return imgr.add(buildIntegerFormula(plus.left), buildIntegerFormula(plus.right));

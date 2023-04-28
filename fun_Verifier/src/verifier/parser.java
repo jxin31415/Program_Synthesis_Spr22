@@ -202,15 +202,28 @@ public class parser {
         }
     }
 
-    // (Left) + -
-    public static Expression e3(){
+    // (Left) *
+    public static Expression e3_a(){
         Expression v = e2();
 
         while(true){
+            if(consume("*")){
+                v = new Multiply(v, e2());
+            } else {
+                return v;
+            }
+        }
+    }
+
+    // (Left) + -
+    public static Expression e3_b(){
+        Expression v = e3_a();
+
+        while(true){
             if(consume("+")){
-                v = new Plus(v, e2());
+                v = new Plus(v, e3_a());
             } else if(consume("-")){
-                v = new Plus(v, new Negate(e2()));
+                v = new Plus(v, new Negate(e3_a()));
             } else {
                 return v;
             }
@@ -219,19 +232,19 @@ public class parser {
 
     // < <= > >=
     public static Expression e4(){
-        Expression v = e3();
+        Expression v = e3_b();
 
         while(true){
             if(consume("<=")){
-                Expression v2 = e3();
+                Expression v2 = e3_b();
                 v = new Or(new LessThan(v, v2), new Equal(v, v2));
             } else if(consume(">=")){
-                Expression v2 = e3();
+                Expression v2 = e3_b();
                 v = new Or(new LessThan(v2, v), new Equal(v2, v));
             } else if(consume("<")){
-                v = new LessThan(v, e3());
+                v = new LessThan(v, e3_b());
             } else if(consume(">")){
-                v = new LessThan(e3(), v);
+                v = new LessThan(e3_b(), v);
             } else {
                 return v;
             }
